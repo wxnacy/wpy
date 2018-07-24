@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'wpy',
-    version = '0.0.1',
+    version = '0.0.2',
     keywords='python3',
     description = 'a library for python Developer',
     license = 'MIT License',
