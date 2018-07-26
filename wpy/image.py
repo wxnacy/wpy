@@ -22,6 +22,7 @@ class Image():
             self.image = I.open(self.path)
 
         self.format = self.image.format.lower()
+        self.size = self.image.size
 
     def save(self, path, size):
         self.image.thumbnail(size)

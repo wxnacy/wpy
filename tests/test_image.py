@@ -18,6 +18,7 @@ class TestCase(unittest.TestCase):
         i = Image('/Users/wxnacy/Downloads/log.jpeg')
         self.assertEqual(i.format, 'jpeg')
         i.save('/Users/wxnacy/Downloads/log_40.jpeg', (40, 40))
+        print(i.image.size)
 
 
 if __name__ == "__main__":
