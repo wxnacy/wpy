@@ -9,6 +9,46 @@ import time
 import random
 import threading
 
+STR = [
+    'a' , 'b' , 'c' , 'd' , 'e' , 'f' , 'g' , 'h' ,
+    'i' , 'j' , 'k' , 'l' , 'm' , 'n' , 'o' , 'p' ,
+    'q' , 'r' , 's' , 't' , 'u' , 'v' , 'w' , 'x' ,
+    'y' , 'z' , '0' , '1' , '2' , '3' , '4' , '5' ,
+    '6' , '7' , '8' , '9' , 'A' , 'B' , 'C' , 'D' ,
+    'E' , 'F' , 'G' , 'H' , 'I' , 'J' , 'K' , 'L' ,
+    'M' , 'N' , 'O' , 'P' , 'Q' , 'R' , 'S' , 'T' ,
+    'U' , 'V' , 'W' , 'X' , 'Y' , 'Z'
+]
+
+INT = [
+    '0', '1', '2', '3', '4', '5',
+    '6', '7', '8', '9'
+]
+
+def random_str(str_len):
+    """
+    获取随机字符串
+    :param str_len: 需要获取的长度
+    :return:
+    """
+    def _create():
+        return str(STR[int(random.uniform(0, len(STR)))])
+    res = [_create() for x in range(0, str_len)]
+    return ''.join(res)
+
+def random_int(int_len):
+    """
+    获取随机数字
+    :param int_len: 需要获取的长度
+    :return:
+    """
+    def _create(i):
+        begin = 0
+        if i == 0:
+            begin = 1
+        return str(INT[int(random.uniform(begin, len(INT)))])
+    res = [_create(x) for x in range(0, int_len)]
+    return int(''.join(res))
 
 class Snowflake(object):
     region_id_bits = 2
