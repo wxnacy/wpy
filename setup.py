@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'wpy',
-    version = '0.1.0',
+    version = '0.2.0',
     keywords='python3',
     description = 'a library for python Developer',
     license = 'MIT License',
@@ -20,6 +20,7 @@ setup(
     install_requires = [
         'requests>=2.19.1',
         'pycrypto>=2.6.1',
+        'Pillow>=5.2.0',
     ],
 )
 
