@@ -47,7 +47,7 @@ class BaseDict(dict):
             sub_keys = k.split('[')[1].rstrip(']').split(',')
             return key, sub_keys
 
-        def _check_key(t, o, k):
+        def _include(t, o, k):
             """
             判断key需要何种过滤
             :param t: 过滤结果
@@ -57,10 +57,21 @@ class BaseDict(dict):
             """
             if '.' in k:
                 key, sub_key = _kv1(k)
+                v = o.get(key)
                 if o.get(key) and isinstance(o.get(key), dict):
                     if key not in t:
                         t[key] = {}
-                    t[key] = _check_key(t[key], o[key], sub_key)
+                    t[key] = _include(t[key], o[key], sub_key)
+                elif v and isinstance(v, list):
+                    if key not in t:
+                        t[key] = []
+                    for i in range(len(v)):
+                        temp = BaseDict(v[i]).filter(sub_key)
+                        if len(t[key]) == i:
+                            t[key].append(temp)
+                        else:
+                            t[key][i].update(temp)
+
             elif '[' in k and ']' in k:
                 key, sub_keys = _kv2(k)
                 v = o.get(key)
@@ -76,14 +87,22 @@ class BaseDict(dict):
         def _exclude(o, k):
             if '.' in k:
                 key, sub_key = _kv1(k)
-                if o.get(key):
-                    o[key].pop(sub_key)
+                v = o.get(key)
+                if v and isinstance(v, dict):
+                    if sub_key in o[key]:
+                        o[key].pop(sub_key)
+                elif v and isinstance(v, list):
+                    o[key] = [BaseDict(o).filter(source_exclude=[sub_key])
+                            for o in v]
+
             elif '[' in k and ']' in k:
                 key, sub_keys = _kv2(k)
                 v = o.get(key)
-                print(v)
                 if v and isinstance(v, dict):
                     o[key] = BaseDict(v).filter(source_exclude=sub_keys)
+                elif v and isinstance(v, list):
+                    o[key] = [BaseDict(o).filter(source_exclude=sub_keys)
+                            for o in v]
             else:
                 if k in o:
                     o.pop(k)
@@ -91,7 +110,7 @@ class BaseDict(dict):
         temp = {}
         if source_include:
             for item in source_include:
-                temp = _check_key(temp, self, item)
+                temp = _include(temp, self, item)
             return temp
         elif source_exclude:
             for item in source_exclude:
