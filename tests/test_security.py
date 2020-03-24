@@ -9,6 +9,7 @@ from wpy.common import MD5
 
 CONTENT = 'wxnacy'
 FILENAME='tests/test_security.txt'
+URL='https://raw.githubusercontent.com/wxnacy/wpy/master/tests/test_security.txt'
 
 class TestCase(unittest.TestCase):
     def setUp(self):
@@ -28,6 +29,7 @@ class TestCase(unittest.TestCase):
         self.assertEqual(MD5.encrypt(CONTENT), '1f806eb48b670c40af49a3f764ba086f')
         self.assertEqual(MD5.encrypt_file(FILENAME),
                 '6e7a99c2df5ff33f691eff82623a1152')
+        self.assertEqual(MD5.encrypt_url(URL), '6e7a99c2df5ff33f691eff82623a1152')
 
         shorts = security.short('https://translate.google.cn/#en/zh-CN/random')
         print(shorts)
