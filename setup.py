@@ -3,11 +3,12 @@
 # Author: wxnacy(wxnacy@gmail.com)
 # Description:
 
+from wpy import __version__
 from setuptools import setup, find_packages
 
 setup(
     name = 'wpy',
-    version = '0.3.2',
+    version = __version__,
     keywords='python3',
     description = 'a library for python Developer',
     license = 'MIT License',
@@ -21,6 +22,11 @@ setup(
         'requests>=2.19.1',
         'pycrypto>=2.6.1',
         'Pillow>=5.2.0',
+        'click>=6.7',
     ],
+    entry_points={
+        'console_scripts': ['wpy=wpy.app:run']
+        },
+    #  scripts=['bin/wpytool']
 )
 

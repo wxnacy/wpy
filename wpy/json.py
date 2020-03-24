@@ -3,11 +3,32 @@
 # Author: wxnacy(wxnacy@gmail.com)
 # Description:
 
-def filter(source: dict, *args, **kwargs):
+from functools import singledispatch
+from functools import lru_cache
+
+def filter(source, *args, **kwargs):
     source_include = args if args else kwargs.get('source_include')
     source_exclude = kwargs.get('source_exclude')
     return BaseDict(source).filter(source_include = source_include,
         source_exclude = source_exclude)
+
+#  @singledispatch
+#  def filter(source: dict, *includes, exclude=[]):
+    #  print(source, includes, exclude)
+    #  _dict = {}
+    #  for i in includes:
+        #  if i in source:
+            #  _dict[i] = source[i]
+
+    #  for e in exclude:
+        #  if e in source:
+            #  _dict.pop(e)
+    #  return _dict
+
+#  @filter.register(list)
+#  def _(lines, *includes, exclude=[]):
+    #  return [filter(item, *includes, exclude=exclude) for item in lines]
+
 
 class BaseDict(dict):
     def filter(self, *args, **kwargs):
@@ -120,3 +141,16 @@ class BaseDict(dict):
 
     def __getattr__(self, item):
         return self[item]
+
+
+if __name__ == "__main__":
+    print(filter(dict(id = 1, name = 'wxnacy', age = 12), 'id', 'name', exclude=['name']))
+    print(filter([dict(id = 1, name = 'wxnacy', age = 12)] * 3, 'id', 'name', exclude=['name']))
+    print(filter(dict(book=dict(id = 1, name = 'wxnacy', age = 12)), 'book.id',
+        'book.name', exclude=['name']))
+
+
+
+
+
+
