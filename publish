@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-TAG_NAME=$1
+TAG_NAME=$(python -c "import wpy;print(wpy.__version__)")
+
+echo $*
 
 ./push_tag $*
 python setup.py sdist
