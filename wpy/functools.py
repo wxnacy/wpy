@@ -4,9 +4,11 @@
 # Description:  常用的装饰器
 
 import timeit
+import pkgutil
 
 CLOCK_FMT = '[{T:0.8f}s] {F}({A}, {K}) -> {R}'
 def clock(times=1, fmt=CLOCK_FMT, logger_func=print):
+    '''函数计时器'''
     def clock_wraper(func):
         def _wraper(*args, **kwargs):
             t0 = timeit.default_timer()
@@ -24,15 +26,29 @@ def clock(times=1, fmt=CLOCK_FMT, logger_func=print):
         return _wraper
     return clock_wraper
 
+def find_modules(paths):
+    '''查找路径下的所有 module'''
+    if isinstance(paths, str):
+        paths = [paths]
+    for finder, name, ispkg in pkgutil.iter_modules(paths):
+        #  print(finder, name, ispkg)
+        if ispkg:
+            subpath = '{}/{}'.format(finder.path, name)
+            yield from find_modules(subpath)
+        else:
+            module_path = '{}/{}'.format(finder.path, name)
+            yield module_path.replace('/', '.')
 
 if __name__ == "__main__":
-    @clock()
-    def test(*args, **kw):
-        r = 0
-        for i in range(10000):
-            r += i
+    #  @clock()
+    #  def test(*args, **kw):
+        #  r = 0
+        #  for i in range(10000):
+            #  r += i
 
-    test(1, 'a')
+    #  test(1, 'a')
 
+    for m in find_modules('tests'):
+        print(m)
 
 
