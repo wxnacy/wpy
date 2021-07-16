@@ -23,6 +23,8 @@ setup(
         'pycrypto>=2.6.1',
         'Pillow>=5.2.0',
         'click>=6.7',
+        'xmltodict',
+        'pyyaml',
     ],
     entry_points={
         'console_scripts': ['wpy=wpy.app:run']

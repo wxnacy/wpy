@@ -8,6 +8,7 @@ from argparse import Namespace
 from collections import deque
 
 from .enum import Action
+from wpy.base import BaseObject
 
 class ArgumentNamespace(Namespace):
     def __init__(self, **kwargs):
@@ -21,19 +22,20 @@ class ArgumentNamespace(Namespace):
                 count += 1
         return count > 1
 
-class Argument(object):
+class Argument(BaseObject):
     name = ''
+    help = ''
     short_name = ''
     is_cmd = False
     action = ''
     value = None
     required = False
 
-    def __init__(self, name, action):
+    def __init__(self, name, action, **kwargs):
+        super().__init__(action = action, **kwargs)
         self.name = name.replace('--', '')
         self.is_cmd = True if not name.startswith('--') else False
         self.required = True if self.is_cmd else False
-        self.action = action
         self.clear()
 
     def clear(self):
@@ -48,7 +50,6 @@ class Argument(object):
         return isinstance(self.value, list)
 
 class ArgumentParser(object):
-    cmd = ''
     cmd_arg = None
     _arg_dict = None
     argument = None
@@ -57,13 +58,13 @@ class ArgumentParser(object):
         self._arg_dict = {}
         self.add_argument('--verbose', action=Action.STORE_TRUE.value)
 
-    def add_argument(self, *args, action=None):
+    def add_argument(self, *args, action=None, **kwargs):
         """
         添加参数
         """
         if not action:
             action = Action.STORE.value
-        arg = Argument(args[0], action)
+        arg = Argument(args[0], action, **kwargs)
         if arg.is_cmd:
             self.cmd_arg = arg
         self._arg_dict[arg.name] = arg

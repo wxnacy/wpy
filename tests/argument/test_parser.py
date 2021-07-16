@@ -5,19 +5,22 @@
 
 """
 
-import pytest
-
 from wpy.argument import ArgumentParser
 from wpy.argument import Action
 
 def test_parse_args():
     parser = ArgumentParser()
     parser.add_argument('cmd')
-    parser.add_argument('--config')
+    parser.add_argument('--config', help='配置地址')
     parser.add_argument('--module')
     parser.add_argument('--name')
     parser.add_argument('--save', action=Action.STORE_TRUE.value)
     parser.add_argument('--params', action=Action.APPEND.value)
+
+    arguments = parser.get_arguments()
+    for arg in arguments:
+        if arg.name == 'config':
+            assert arg.help == '配置地址'
 
     line = 'run'
     arg = parser.parse_args(line)
