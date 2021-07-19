@@ -29,3 +29,10 @@ class FileUtils:
         filepath = os.path.expanduser(filepath)
         with open(filepath, 'w') as f:
             yaml.dump(data, f)
+
+    @classmethod
+    def write_dict(cls, filepath, data):
+        """保存成 dict 格式文件"""
+        filepath = os.path.expanduser(filepath)
+        with open(filepath, 'w') as f:
+            f.write(json.dumps(data, indent=4))
