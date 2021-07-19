@@ -6,9 +6,9 @@
 """
 
 
-import multiprocessing as mp
-from pathos.multiprocessing import ProcessPool
-from multiprocessing.pool import ThreadPool as Pool
+#  import multiprocessing as mp
+#  from pathos.multiprocessing import ProcessPool
+#  from multiprocessing.pool import ThreadPool as Pool
 from concurrent.futures import ThreadPoolExecutor
 import m3u8
 import os
@@ -78,13 +78,13 @@ class M3u8Downloader(object):
     db = FileStorage('~/Downloads/db').get_db('m3u8')
     task_table = db.get_table('task')
     sub_task_table = None
-    download_root = os.path.expanduser('~/Downloads/m3u8')
+    download_root = os.path.expanduser('~/Downloads/jable')
     status = TaskStatus.PROCESS.value
 
     task_id = ''
 
     def __init__(self, task_id):
-        self.pool = mp.Pool(processes = 4)
+        #  self.pool = mp.Pool(processes = 4)
         #  self.url = url
         self.task_id = task_id
         self.sub_task_table = self.db.get_table('sub_task-{}'.format(self.task_id))
@@ -125,6 +125,7 @@ class M3u8Downloader(object):
             task['_id'] = _id
             cls.task_table.insert(task)
         sub_task_table = cls.db.get_table('sub_task-{}'.format(_id))
+        sub_task_table.drop()
         download_root = os.path.join(cls.download_root, _id)
 
         doc = {
@@ -134,9 +135,12 @@ class M3u8Downloader(object):
         }
         sub_task_table.insert(doc)
         m3 = m3u8.load(url)
-        for i, seg in enumerate(m3.segments):
-            print(i, seg.uri)
-            ts_url = seg.uri
+        #  for i, seg in enumerate(m3.segments):
+        for i, name in enumerate(m3.files):
+            ts_url = name
+            if not ts_url.startswith('http'):
+                ts_url = os.path.join(m3.base_uri, ts_url)
+            print(i, ts_url)
             _path = os.path.join(download_root, os.path.basename(ts_url))
             doc = {
                 "download_url": ts_url,
@@ -147,6 +151,8 @@ class M3u8Downloader(object):
         return _id
 
     def run(self):
+        self.task_table.update({ "_id": self.task_id },
+                { "status": TaskStatus.PROCESS.value })
         self.sub_task_table.update({}, { "status": TaskStatus.WAITING.value })
         progress.start_task(self.progress_task_id)
         while not self._check_done():
@@ -155,7 +161,7 @@ class M3u8Downloader(object):
                 continue
             _id = doc['_id']
             self._update_sub_task_status(_id, TaskStatus.PROCESS.value)
-            with ThreadPoolExecutor(max_workers=16) as pool:
+            with ThreadPoolExecutor(max_workers=8) as pool:
                 #  pool.submit(download, self.task_id, _id)
                 pool.submit(self._download_by_id,  _id)
 
@@ -217,13 +223,13 @@ class M3u8Downloader(object):
         if done_event.is_set():
             self.status = TaskStatus.STOP.value
             self.task_table.update({ "_id": self.task_id },
-                { "status": TaskStatus.SUCCESS.value })
+                { "status": self.status })
 
         done = self.status in (TaskStatus.SUCCESS.value,
                 TaskStatus.FAILED.value, TaskStatus.STOP.value)
         if done:
             self.task_table.update({ "_id": self.task_id },
-                { "status": TaskStatus.SUCCESS.value })
+                { "status": self.status })
         return done
 
 
