@@ -81,7 +81,9 @@ class FileTable(FileDB):
             return self._read_by_id(_id)
         return None
 
-    def find(self, query, **kwargs):
+    def find(self, query=None, **kwargs):
+        if not query:
+            query = {}
         if '_id' in query:
             item = self.find_one_by_id(query['_id'])
             return [item] if item else []
@@ -91,14 +93,19 @@ class FileTable(FileDB):
             doc = self._read_by_id(_id)
             if not self._exists_doc(query, doc):
                 continue
+            if not doc:
+                continue
             res.append(doc)
 
-        res.sort(lambda x: x.get("_create_time"))
+        res.sort(key = lambda x: x.get("_create_time", ''))
         return res
 
     def find_one(self, query, **kwargs):
         docs = self.find(query, **kwargs)
         return docs[0] if docs else None
+
+    def count(self, query):
+        return len(self.find(query))
 
     def update(self, query, update_data):
         if '_id' in update_data:
@@ -154,7 +161,10 @@ class FileTable(FileDB):
         return os.listdir(self.table_root)
 
     def _read_by_id(self, _id):
-        return FileUtils.read_dict(self._generage_path(_id))
+        try:
+            return FileUtils.read_dict(self._generage_path(_id))
+        except Exception as e:
+            return {}
 
     def _generage_path(self, _id):
         return os.path.join(self.table_root, _id)
