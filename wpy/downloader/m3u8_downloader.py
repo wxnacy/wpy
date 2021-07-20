@@ -4,17 +4,16 @@
 """
 
 """
-
-
-#  import multiprocessing as mp
-#  from pathos.multiprocessing import ProcessPool
-#  from multiprocessing.pool import ThreadPool as Pool
 from concurrent.futures import ThreadPoolExecutor
+from multiprocessing import Process
 import m3u8
 import os
 import requests
 from wpy.db import FileStorage
+from gevent import monkey
+monkey.patch_all()
 
+import gevent
 import time
 
 from enum import Enum
@@ -22,47 +21,6 @@ from enum import Enum
 from wpy.downloader.progress import progress, done_event
 from wpy.common.loggers import create_logger
 
-
-#  def download_url(url, path):
-    #  headers = {
-        #  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-                #  "(KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36",
-    #  }
-    #  if os.path.exists(path):
-        #  return True
-    #  dirname = os.path.dirname(path)
-    #  if not os.path.exists(dirname):
-        #  os.makedirs(dirname)
-    #  res = requests.get(url, headers = headers)
-    #  status_code = res.status_code
-    #  if status_code != 200:
-        #  return False
-    #  with open(path, 'wb') as f:
-        #  f.write(res.content)
-    #  return True
-
-#  def download(task_id, _id):
-    #  #  print(_id)
-    #  sub_task_table = db.get_table('sub_task-{}'.format(task_id))
-    #  doc = sub_task_table.find_one_by_id(_id)
-    #  try:
-        #  flag = download_url(doc.get("download_url"), doc.get("download_path"))
-    #  except Exception as e:
-        #  flag = False
-        #  status = TaskStatus.FAILED.value
-        #  sub_task_table.update({ "_id": _id }, { "status": status, "error": str(e) })
-        #  return
-
-
-    #  if flag:
-        #  status = TaskStatus.SUCCESS.value
-        #  sub_task_table.update({ "_id": _id }, { "status": status })
-    #  else:
-        #  status = TaskStatus.FAILED.value
-        #  sub_task_table.update({ "_id": _id }, { "status": status })
-
-#  pool = mp.Pool(processes = 4)
-#  pool = Pool(processes = 8)
 class TaskStatus(Enum):
     WAITING = 'waiting'
     SUCCESS = 'success'
@@ -74,6 +32,7 @@ class M3u8Downloader(object):
     logger = create_logger('M3u8Downloader')
     done = False
     success_count = 0
+    process_count = 0
     total_count = 0
     db = FileStorage('~/Downloads/db').get_db('m3u8')
     task_table = db.get_table('task')
@@ -156,18 +115,32 @@ class M3u8Downloader(object):
         self.sub_task_table.update({}, { "status": TaskStatus.WAITING.value })
         progress.start_task(self.progress_task_id)
         while not self._check_done():
+            if self._is_continue():
+                continue
             doc = self.sub_task_table.find_one({ "status": TaskStatus.WAITING.value })
             if not doc:
                 continue
             _id = doc['_id']
             self._update_sub_task_status(_id, TaskStatus.PROCESS.value)
-            with ThreadPoolExecutor(max_workers=8) as pool:
-                #  pool.submit(download, self.task_id, _id)
-                pool.submit(self._download_by_id,  _id)
+            self._download_by_web(_id)
+            #  p = Process(target = self._download_by_id, args = (_id, ))
+            #  p.start()
+            #  g = gevent.spawn(self._download_by_id, _id)
+            #  g.join()
+
+            #  with ThreadPoolExecutor(max_workers=8) as pool:
+                #  pool.submit(self._download_by_id,  _id)
 
         if self.done:
             self.task_table.update({ "_id": self.task_id },
                 { "status": TaskStatus.SUCCESS.value })
+
+    def _download_by_web(self, sub_id):
+        requests.get(
+                'http://0.0.0.0:5000/api/task/{}/sub_task/{}/download'.format(
+                    self.task_id, sub_id
+                    ))
+        progress.update(self.progress_task_id, advance = 1)
 
     def _download_by_id(self, sub_id):
         doc = self.sub_task_table.find_one_by_id(sub_id)
@@ -209,9 +182,15 @@ class M3u8Downloader(object):
     def _update_sub_task_status(self, _id, status):
         self.sub_task_table.update({ "_id": _id }, { "status": status })
 
+    def _is_continue(self):
+        self.process_count = self.sub_task_table.count(
+                { "status": TaskStatus.PROCESS.value })
+        self.logger.info('process_count %s', self.process_count)
+        if self.process_count >= 8:
+            return True
+        return False
+
     def _check_done(self):
-        #  success_items = self.sub_task_table.find({ "status": TaskStatus.SUCCESS.value })
-        #  self.success_count = len(success_items)
         if self.success_count >= self.total_count:
             self.status = TaskStatus.SUCCESS.value
         else:
@@ -240,7 +219,7 @@ def start(task_id):
 if __name__ == "__main__":
     import random
     url = 'https://hls.videocc.net/f8f97d17d0/d/f8f97d17d0a21f1a1d84d214c5dcbfdd_1.m3u8'
-    M3u8Downloader.add_task(url)
+    #  M3u8Downloader.add_task(url)
     task_table = FileStorage('~/Downloads/db').get_db('m3u8').get_table('task')
     tasks = task_table.find()
     task_ids = [ o.get("_id") for o in tasks ]
