@@ -10,10 +10,10 @@ import m3u8
 import os
 import requests
 from wpy.db import FileStorage
-from gevent import monkey
-monkey.patch_all()
+#  from gevent import monkey
+#  monkey.patch_all()
 
-import gevent
+#  import gevent
 import time
 
 from enum import Enum
@@ -122,14 +122,15 @@ class M3u8Downloader(object):
                 continue
             _id = doc['_id']
             self._update_sub_task_status(_id, TaskStatus.PROCESS.value)
-            self._download_by_web(_id)
+            #  self._download_by_web(_id)
             #  p = Process(target = self._download_by_id, args = (_id, ))
             #  p.start()
             #  g = gevent.spawn(self._download_by_id, _id)
             #  g.join()
 
-            #  with ThreadPoolExecutor(max_workers=8) as pool:
+            with ThreadPoolExecutor(max_workers=8) as pool:
                 #  pool.submit(self._download_by_id,  _id)
+                pool.submit(self._download_by_web,  _id)
 
         if self.done:
             self.task_table.update({ "_id": self.task_id },
