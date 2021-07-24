@@ -4,6 +4,7 @@
 # Description:
 
 import json
+from enum import Enum
 
 class BaseObject(object):
     def __init__(self, **kwargs):
@@ -21,3 +22,32 @@ class BaseObject(object):
 
     def __str__(self):
         return self.to_json()
+
+
+class BaseEnum(Enum):
+    """枚举基类"""
+
+    @classmethod
+    def values(cls):
+        return [x.value for _, x in cls.__members__.items()]
+
+    @classmethod
+    def is_valid(cls, value):
+        return value in cls.values()
+
+    @classmethod
+    def get_by_value(cls, state_value):
+        for name, member in cls._member_map_.items():
+            if state_value == member.value:
+                return member
+
+        return None
+
+    @classmethod
+    def validate(cls, value):
+        """验证枚举值"""
+        if value not in cls.values():
+            raise ValueError('不支持的枚举值: {val}'.format(val=value))
+
+    def __str__(self):
+        return self.value
