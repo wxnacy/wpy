@@ -5,6 +5,7 @@
 
 import timeit
 import pkgutil
+import subprocess
 
 CLOCK_FMT = '[{T:0.8f}s] {F}({A}, {K}) -> {R}'
 def clock(times=1, fmt=CLOCK_FMT, logger_func=print):
@@ -38,6 +39,12 @@ def find_modules(paths):
         else:
             module_path = '{}/{}'.format(finder.path, name)
             yield module_path.replace('/', '.')
+
+def run_shell(command):
+    """运行 shell 语句"""
+    res = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE,
+        stderr = subprocess.PIPE)
+    return res.communicate()
 
 if __name__ == "__main__":
     #  @clock()
