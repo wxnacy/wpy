@@ -28,7 +28,7 @@ setup(
         'rich',
     ],
     entry_points={
-        'console_scripts': ['wpy=wpy.app:run']
+        'console_scripts': ['wpy=wpy.cli.shell:main']
         },
     #  scripts=['bin/wpytool']
 )
