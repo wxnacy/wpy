@@ -64,7 +64,6 @@ def md5(text):
     sha1.update(text.encode())
     return sha1.hexdigest()
 
-
 class AESecurity():
     @classmethod
     def generate_key(cls):
