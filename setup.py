@@ -20,7 +20,7 @@ setup(
     platforms = 'any',
     install_requires = [
         'requests>=2.19.1',
-        'pycrypto>=2.6.1',
+        #  'pycrypto>=2.6.1',
         'Pillow>=5.2.0',
         'click>=6.7',
         'xmltodict',
