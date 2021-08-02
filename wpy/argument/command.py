@@ -6,6 +6,7 @@
 """
 import abc
 from .parser import ArgumentParser
+from wpy.base import BaseFactory
 
 class CommandArgumentParser(ArgumentParser, metaclass=abc.ABCMeta):
     cmd = ''
@@ -42,37 +43,22 @@ class DefaultCommandArgumentParser(CommandArgumentParser):
     def run(self, args):
         pass
 
-class CommandArgumentParserFactory():
-    _argparser = {}
+class CommandArgumentParserFactory(BaseFactory):
+    object_cls = CommandArgumentParser
+    key = 'cmd'
+    instance_func = 'default'
+    default_cls = DefaultCommandArgumentParser
 
     @classmethod
     def build_parser(cls, text=None):
         """根据命令构建参数解析器"""
         cmd = None
         if text:
-            args = DefaultCommandArgumentParser.default().parse_args(text)
+            args = cls.default_cls.default().parse_args(text)
             cmd = args.cmd
-        Parser = cls._argparser.get(cmd, DefaultCommandArgumentParser)
-        return Parser.default()
+        ins = cls.build_instance(cmd)
+        return ins
 
     @classmethod
     def get_cmd_names(cls):
-        return cls._argparser.keys()
-
-    @classmethod
-    def register(cls, active=True):
-        def decorate(func):
-            #  logger.info('register active=%s func %s.%s', active, func.__module__,
-                #  func)
-            #  if isinstance(func, str):
-                #  raise Exception('can not register str')
-            if not issubclass(func, CommandArgumentParser):
-                raise Exception('only one register CommandArgumentParser subclass')
-            if active:
-                cls._argparser[func.cmd] = func
-            else:
-                cls._argparser.pop(func.cmd, None)
-
-            return func
-        return decorate
-
+        return cls.get_factory_keys()

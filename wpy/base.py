@@ -51,3 +51,44 @@ class BaseEnum(Enum):
 
     def __str__(self):
         return self.value
+
+class BaseFactory(object):
+    _factory = {}
+    object_cls = object
+    default_cls = None
+    key = 'name'
+    instance_func = None
+
+    @classmethod
+    def build(cls, name=None):
+        """构建"""
+        clazz = cls._factory.get(name) or cls.default_cls
+        return clazz
+
+    @classmethod
+    def build_instance(cls, name=None):
+        """构建实例"""
+        clazz = cls.build(name)
+        if not clazz:
+            return None
+        if cls.instance_func:
+            return getattr(clazz, cls.instance_func)()
+        return clazz()
+
+    @classmethod
+    def get_factory_keys(cls):
+        return cls._factory.keys()
+
+    @classmethod
+    def register(cls, active=True):
+        def decorate(func):
+            if not issubclass(func, cls.object_cls):
+                raise Exception('only one register {} subclass'.format(
+                    cls.object_cls))
+            key = getattr(func, cls.key)
+            if active:
+                cls._factory[key] = func
+            else:
+                cls._factory.pop(key, None)
+            return func
+        return decorate
