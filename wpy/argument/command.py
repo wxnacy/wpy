@@ -45,7 +45,7 @@ class DefaultCommandArgumentParser(CommandArgumentParser):
 
 class CommandArgumentParserFactory(BaseFactory):
     object_cls = CommandArgumentParser
-    key = 'cmd'
+    cls_name = 'cmd'
     instance_func = 'default'
     default_cls = DefaultCommandArgumentParser
 
@@ -61,4 +61,4 @@ class CommandArgumentParserFactory(BaseFactory):
 
     @classmethod
     def get_cmd_names(cls):
-        return cls.get_factory_keys()
+        return cls.get_keys()
