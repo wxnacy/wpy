@@ -6,11 +6,13 @@
 """
 
 from .base import BaseCompleter
-from .command import CommandCompleter
+#  from .command import CommandCompleter
 from .filesystem import ExecutableCompleter
+from .word import WordCompleter
 
 __all__ = [
     'BaseCompleter'
-    'CommandCompleter'
+    #  'CommandCompleter'
     'ExecutableCompleter'
+    'WordCompleter'
 ]

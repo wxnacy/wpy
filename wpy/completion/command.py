@@ -27,15 +27,6 @@ class CommandCompleter(BaseCompleter):
         self.wapi = wapi
         self.path_completer = ExecutableCompleter()
 
-    #  def _get_parser(self, cmd=None):
-        #  if cmd not in self.parser_dict:
-            #  parser = ArgumentParserFactory.build_parser(cmd)
-            #  if isinstance(parser, CommandArgumentParser):
-                #  parser.set_wapi(self.wapi)
-                #  #  parser.set_prompt_session(self.session)
-            #  self.parser_dict[cmd] = parser
-        #  return self.parser_dict[cmd]
-
     def yield_words(self, words):
         """获取命令参数的补全器"""
         #  self.logger.info('completion words %s', words)

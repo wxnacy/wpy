@@ -9,11 +9,9 @@ import os
 from prompt_toolkit.completion import Completer
 from prompt_toolkit.completion import Completion
 
-from wapi.common.loggers import create_logger
 from .base import BaseCompleter
 
 class WordCompleter(BaseCompleter):
-    logger = create_logger("WordCompleter")
 
     def __init__(self, words):
         self.words = words

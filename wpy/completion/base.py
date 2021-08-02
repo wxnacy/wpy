@@ -8,17 +8,14 @@
 from prompt_toolkit.completion import Completer
 from prompt_toolkit.completion import Completion
 
-from wapi.tools import search
-from wapi.common.loggers import create_logger
+from wpy import tools
 
 class BaseCompleter(Completer):
-    logger = create_logger("BaseCompleter")
     char_before_cursor = ''
     current_line_before_cursor = ''
     first_word = ''
 
     def yield_completer(self, completer):
-        self.logger.info('completer.__name__ %s', completer)
         items = completer.get_completions(self.document, self.complete_event)
         for item in items:
             yield item
@@ -69,10 +66,6 @@ class BaseCompleter(Completer):
     def get_completions(self, document, complete_event):
         self.document = document
         self.complete_event = complete_event
-        self.logger.info('-' * 100)
-        self.logger.info('word_before_cursor %s', self.word_before_cursor)
-        self.logger.info('word_for_completion %s', self.word_for_completion)
-        self.logger.info('first_word %s', self.first_word)
         for k in dir(document):
             if k.startswith('_'):
                 continue
@@ -95,7 +88,6 @@ class BaseCompleter(Completer):
         """过滤文件名"""
         name = name.lower()
         word = self.word_before_cursor.lower()
-        self.logger.info('name %s word %s', name, word)
         if word in ('/', '~/'):
             return True
         if name.startswith(word):
@@ -115,7 +107,7 @@ class BaseCompleter(Completer):
             words_dict = { o.text: o for o in words }
             words = [o.text for o in words]
 
-        words = search(words, keyword)
+        words = tools.search(words, keyword)
         if isinstance(first_word, Completion):
             for i in range(len(words)):
                 words[i] = words_dict[words[i]]
