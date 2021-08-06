@@ -46,12 +46,20 @@ class Argument(BaseObject):
         return self._is_set
 
     def set_value(self, value):
-        self.value = self.datatype(value) if self.datatype else value
+        self.value = self._format_value(value)
         self._is_set = True
+
+    def _format_value(self, value):
+        if value == None and self.datatype:
+            return self.datatype()
+        if value == None:
+            return value
+        return self.datatype(value) if self.datatype and not isinstance(
+                value, self.datatype) else value
 
     def add_value(self, value):
         if self.action == Action.APPEND.value:
-            self.value.append(self.datatype(value) if self.datatype else value)
+            self.value.append(self._format_value(value))
             self._is_set = True
         else:
             self.set_value(value)
