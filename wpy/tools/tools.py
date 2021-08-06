@@ -26,7 +26,7 @@ def search(datas, word):
     res.sort(key = lambda x: patten[x])
     return res
 
-def sortd_plus(arr, sorter=None, reverse=False):
+def sorted_plus(arr, sorter=None, reverse=False):
     """
     排序
     :param list arr: 数组
