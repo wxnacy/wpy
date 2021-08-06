@@ -5,6 +5,7 @@
 工具
 """
 
+from functools import cmp_to_key
 from collections import defaultdict
 
 def search(datas, word):
@@ -25,3 +26,26 @@ def search(datas, word):
     res.sort(key = lambda x: patten[x])
     return res
 
+def sortd_plus(arr, sorter=None, reverse=False):
+    """
+    排序
+    :param list arr: 数组
+    :param list sorter: 排序方式
+        [('age', 1), ('id', -1)]    age 按照正序，相同时 id 倒序
+    :param bool reverse: 是否倒序
+    """
+    def _sort(a, b):
+        for name, sort_by in sorter:
+            if a[name] < b[name]:
+                return -sort_by
+            elif a[name] > b[name]:
+                return sort_by
+
+        return 0
+
+    if sorter:
+        arr.sort(key=cmp_to_key(_sort))
+    else:
+        arr.sort(reverse = reverse)
+
+    return arr
