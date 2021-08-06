@@ -32,6 +32,7 @@ class Argument(BaseObject):
     required = False
     datatype = None
     default = None
+    _is_set = False
 
     def __init__(self, name, action, **kwargs):
         super().__init__(action = action, **kwargs)
@@ -40,14 +41,23 @@ class Argument(BaseObject):
         self.required = True if self.is_cmd else False
         self.clear()
 
+    @property
+    def is_set(self):
+        return self._is_set
+
     def set_value(self, value):
         self.value = self.datatype(value) if self.datatype else value
+        self._is_set = True
 
     def add_value(self, value):
         if self.action == Action.APPEND.value:
             self.value.append(self.datatype(value) if self.datatype else value)
+            self._is_set = True
+        else:
+            self.set_value(value)
 
     def clear(self):
+        self._is_set = False
         self.value = None
         if self.action == Action.STORE_TRUE.value:
             self.value = self.default or False
@@ -139,11 +149,7 @@ class ArgumentParser(object):
                 val_index = i + 1
                 if val_index < args_len:
                     # 列表增加数据
-                    if arg.action == Action.APPEND.value:
-                        arg.add_value(args[val_index])
-                    else:
-                        # 直接复制
-                        arg.set_value(args[val_index])
+                    arg.add_value(args[val_index])
                     i += 1
             i += 1
 
