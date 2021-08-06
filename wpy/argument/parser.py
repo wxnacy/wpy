@@ -30,6 +30,8 @@ class Argument(BaseObject):
     action = ''
     value = None
     required = False
+    datatype = None
+    default = None
 
     def __init__(self, name, action, **kwargs):
         super().__init__(action = action, **kwargs)
@@ -38,12 +40,23 @@ class Argument(BaseObject):
         self.required = True if self.is_cmd else False
         self.clear()
 
+    def set_value(self, value):
+        self.value = self.datatype(value) if self.datatype else value
+
+    def add_value(self, value):
+        if self.action == Action.APPEND.value:
+            self.value.append(self.datatype(value) if self.datatype else value)
+
     def clear(self):
         self.value = None
         if self.action == Action.STORE_TRUE.value:
-            self.value = False
-        if self.action == Action.APPEND.value:
-            self.value = []
+            self.value = self.default or False
+        elif self.action == Action.APPEND.value:
+            self.value = self.default or []
+        else:
+            self.value = self.default
+            if self.datatype and self.value:
+                self.value = self.datatype(self.value)
 
     @property
     def is_list(self):
@@ -121,14 +134,16 @@ class ArgumentParser(object):
                 i += 1
                 continue
             if arg.action == Action.STORE_TRUE.value:
-                arg.value = True
+                arg.set_value(True)
             else:
                 val_index = i + 1
                 if val_index < args_len:
+                    # 列表增加数据
                     if arg.action == Action.APPEND.value:
-                        arg.value.append(args[val_index])
+                        arg.add_value(args[val_index])
                     else:
-                        arg.value = args[val_index]
+                        # 直接复制
+                        arg.set_value(args[val_index])
                     i += 1
             i += 1
 
