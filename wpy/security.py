@@ -64,6 +64,13 @@ def md5(text):
     sha1.update(text.encode())
     return sha1.hexdigest()
 
+def md5_file(filepath):
+    h = hashlib.md5()
+    with open(filepath, 'rb') as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            h.update(chunk)
+        return h.hexdigest()
+
 class AESecurity():
     @classmethod
     def generate_key(cls):

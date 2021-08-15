@@ -36,3 +36,38 @@ class FileUtils:
         filepath = os.path.expanduser(filepath)
         with open(filepath, 'w') as f:
             f.write(json.dumps(data, indent=4))
+
+    @classmethod
+    def file_iter(cls, dirname, typ=None):
+        """
+        文件迭代
+        """
+        suffixs = []
+        #  if typ == 'image':
+            #  suffixs = ['jpg', 'png', 'jpeg']
+
+        for _dir, _, names in os.walk(dirname):
+            for name in names:
+                path =  os.path.join(_dir, name)
+                try:
+                    suf = path.rsplit('.', 1)[1]
+                    if typ:
+                        if suf in suffixs:
+                            yield path
+                    else:
+                        yield path
+                except Exception as e:
+                    print(e)
+
+    @classmethod
+    def getsize(cls, filepath):
+        filepath = os.path.expanduser(filepath)
+        if os.path.isfile(filepath):
+            return os.path.getsize(filepath)
+        if os.path.isdir(filepath):
+            total = 0
+            for path in cls.file_iter(filepath):
+                total += os.path.getsize(path)
+            return total
+
+
