@@ -36,9 +36,15 @@ def sorted_plus(arr, sorter=None, reverse=False):
     """
     def _sort(a, b):
         for name, sort_by in sorter:
-            if a[name] < b[name]:
+            a_val = a.get(name)
+            b_val = b.get(name)
+            if a_val is None:
                 return -sort_by
-            elif a[name] > b[name]:
+            if b_val is None:
+                return sort_by
+            if a_val < b_val:
+                return -sort_by
+            elif a_val > b_val:
                 return sort_by
 
         return 0

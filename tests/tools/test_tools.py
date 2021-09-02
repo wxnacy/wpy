@@ -18,3 +18,7 @@ def test_sortd_plus():
     arr = [{"age": 5, "id": 2}, {"age": 5, "id": 5}, {"age": 3, "id": 4}]
     tools.sorted_plus(arr, [('age', 1), ('id', -1)])
     assert arr == [{"age": 3, "id": 4},{"age": 5, "id": 5}, {"age": 5, "id": 2}]
+
+    arr = [{"age": 5, "id": 2}, {"id": 5}, {"age": 3}]
+    tools.sorted_plus(arr, [('age', -1)])
+    assert arr == [{"age": 5, "id": 2},{"age": 3}, {"id": 5}]
