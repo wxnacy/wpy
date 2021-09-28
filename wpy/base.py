@@ -8,7 +8,7 @@ from enum import Enum
 from collections import defaultdict
 
 class BaseObject(object):
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -18,11 +18,11 @@ class BaseObject(object):
     def to_json(self):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True)
 
-    def format(self):
-        return self.to_dict()
+    #  def format(self):
+        #  return self.to_dict()
 
-    def __str__(self):
-        return self.to_json()
+    #  def __str__(self):
+        #  return self.to_json()
 
 
 class BaseEnum(Enum):
