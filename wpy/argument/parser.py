@@ -27,6 +27,7 @@ class Argument(BaseObject):
     help = ''           # 参数帮忙文档
     short_name = ''     # 短名称 -n
     action = ''         # 参数种类
+    is_cmd = False      # 是否为命令参数
     value = None        # 值
     required = False    # 是否为必须
     datatype = None     # 数据类型
@@ -113,6 +114,7 @@ class ArgumentParser(object):
             raise ValueError('add_argument must set args')
 
         kwargs['short_name'] = short_name
+        kwargs['is_cmd'] = is_cmd
         arg = Argument(name, action, **kwargs)
         if is_cmd:
             self.cmd_arg = arg
@@ -145,9 +147,9 @@ class ArgumentParser(object):
         res = {}
         for arg in self.get_arguments():
             if arg.name:
-                res[arg.name] = arg.value
+                res[arg.name.replace('-', '_')] = arg.value
             if arg.short_name:
-                res[arg.short_name] = arg.value
+                res[arg.short_name.replace('-', '_')] = arg.value
         res[self.cmd_arg.name] = self.cmd_arg.value
         return res
 
@@ -199,7 +201,6 @@ class ArgumentParser(object):
                 if not text:
                     raise ValueError('-- is not argument name')
 
-                text = text.replace('-', '_')
                 return text
             if text.startswith('-'):
                 return None
@@ -213,6 +214,5 @@ class ArgumentParser(object):
             text = text[1:]
             if not text:
                 raise ValueError('- is not argument name')
-            text = text.replace('-', '_')
             return text
         return None

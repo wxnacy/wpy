@@ -29,6 +29,9 @@ def test_add_argument():
         parser.add_argument('cmd', 'run')
         assert str(e) == 'command vargument only can set one'
 
+    parser.add_argument('--with-url')
+    assert parser._arg_dict['with-url'].name == 'with-url'
+
 def test_parse_args():
     parser = ArgumentParser()
     parser.add_argument('cmd')
