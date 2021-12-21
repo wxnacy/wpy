@@ -5,10 +5,10 @@
 
 """
 from argparse import Namespace
-from collections import deque
+#  from collections import deque
 
-from .enum import Action
 from wpy.base import BaseObject
+from .enum import Action
 
 class ArgumentNamespace(Namespace):
     def __init__(self, **kwargs):
@@ -23,22 +23,20 @@ class ArgumentNamespace(Namespace):
         return count > 1
 
 class Argument(BaseObject):
-    name = ''
-    help = ''
-    short_name = ''
-    is_cmd = False
-    action = ''
-    value = None
-    required = False
-    datatype = None
-    default = None
+    name = ''           # 参数名称 --name
+    help = ''           # 参数帮忙文档
+    short_name = ''     # 短名称 -n
+    action = ''         # 参数种类
+    value = None        # 值
+    required = False    # 是否为必须
+    datatype = None     # 数据类型
+    default = None      # 默认值
     _is_set = False
 
     def __init__(self, name, action, **kwargs):
-        super().__init__(action = action, **kwargs)
-        self.name = name.replace('--', '')
-        self.is_cmd = True if not name.startswith('--') else False
-        self.required = True if self.is_cmd else False
+        kwargs['name'] = name
+        kwargs['action'] = action
+        super().__init__(**kwargs)
         self.clear()
 
     @property
@@ -83,22 +81,44 @@ class Argument(BaseObject):
 class ArgumentParser(object):
     cmd_arg = None
     _arg_dict = None
+    _short_arg_dict = None
     argument = None
 
     def __init__(self, ):
         self._arg_dict = {}
+        self._short_arg_dict = {}
         self.add_argument('--verbose', action=Action.STORE_TRUE.value)
 
-    def add_argument(self, *args, action=None, **kwargs):
+    def add_argument(self, *args, action=Action.STORE.value, **kwargs):
         """
         添加参数
         """
-        if not action:
-            action = Action.STORE.value
-        arg = Argument(args[0], action, **kwargs)
-        if arg.is_cmd:
+        name = None
+        is_cmd = False
+        short_name = None
+        for _arg in args:
+            if _arg.startswith('--'):
+                name = self._conver_arg_name(_arg) or name
+            elif _arg.startswith('-'):
+                short_name = self._conver_arg_short_name(_arg) or short_name
+            else:
+                # 命令类型参数只能设置一个
+                if len(args) > 1:
+                    raise ValueError('command vargument only can set one')
+                name = self._conver_arg_name(_arg) or name
+                is_cmd = True
+
+        # 至少设置一个参数名称
+        if not name and not short_name:
+            raise ValueError('add_argument must set args')
+
+        kwargs['short_name'] = short_name
+        arg = Argument(name, action, **kwargs)
+        if is_cmd:
             self.cmd_arg = arg
         self._arg_dict[arg.name] = arg
+        if short_name:
+            self._short_arg_dict[short_name] = arg
 
     def get_arguments(self):
         """
@@ -124,7 +144,10 @@ class ArgumentParser(object):
         """创建参数键值对"""
         res = {}
         for arg in self.get_arguments():
-            res[arg.name] = arg.value
+            if arg.name:
+                res[arg.name] = arg.value
+            if arg.short_name:
+                res[arg.short_name] = arg.value
         res[self.cmd_arg.name] = self.cmd_arg.value
         return res
 
@@ -143,11 +166,17 @@ class ArgumentParser(object):
         i = 1
         while i < args_len:
             item = args[i]
-            if not item.startswith('--'):
+            name = None
+            short_name = None
+            if item.startswith('--'):
+                name = self._conver_arg_name(item)
+            elif item.startswith('-'):
+                short_name = self._conver_arg_short_name(item)
+            if not name and not short_name:
                 i += 1
                 continue
-            key = item.replace('--', '')
-            arg = self._arg_dict.get(key)
+            arg = self._arg_dict.get(name) or self._short_arg_dict.get(
+                short_name)
             if not arg:
                 i += 1
                 continue
@@ -161,3 +190,29 @@ class ArgumentParser(object):
                     i += 1
             i += 1
 
+    @classmethod
+    def _conver_arg_name(cls, text):
+        """转参数名"""
+        if text:
+            if text.startswith('--'):
+                text = text[2:]
+                if not text:
+                    raise ValueError('-- is not argument name')
+
+                text = text.replace('-', '_')
+                return text
+            if text.startswith('-'):
+                return None
+            return text
+        return None
+
+    @classmethod
+    def _conver_arg_short_name(cls, text):
+        """转参数短名"""
+        if text and text.startswith('-') and not text.startswith('--'):
+            text = text[1:]
+            if not text:
+                raise ValueError('- is not argument name')
+            text = text.replace('-', '_')
+            return text
+        return None
