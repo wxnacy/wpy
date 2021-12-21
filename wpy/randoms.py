@@ -7,6 +7,12 @@
 
 import random
 
+__all__ = [
+    "RandomUtils",
+    "random_int",
+    "random_str",
+]
+
 class RandomUtils(object):
 
     @classmethod
@@ -55,3 +61,6 @@ class RandomUtils(object):
             n = random.randint(0, len(random_letters) - 1)
             res.append(random_letters[n])
         return ''.join(res)
+
+random_int = RandomUtils.random_int
+random_str = RandomUtils.random_str
