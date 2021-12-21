@@ -6,7 +6,11 @@
 """
 
 from .tools import *
+from .tools import sorted_plus
+from .format import Format
 
 __all__ = [
-        '*'
+        '*',
+        'sorted_plus',
+        'Format',
         ]
