@@ -5,10 +5,9 @@
 随机方法
 """
 
-import pytest
 
 from wpy.files import FileUtils
-from wpy.tools import randoms
+from wpy import randoms
 
 def test_read_write():
     """读写"""

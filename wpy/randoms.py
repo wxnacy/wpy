@@ -37,8 +37,6 @@ class RandomUtils(object):
             res.append(str(n))
         return ''.join(res)
 
-
-
     @classmethod
     def random_str(cls, length, letters=None):
         """随机 str 值"""

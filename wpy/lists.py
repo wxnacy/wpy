@@ -7,6 +7,11 @@ list 工具模块
 
 from functools import cmp_to_key
 
+__all__ = [
+    "ListUtils",
+    "sorted_plus",
+]
+
 class ListUtils(object):
 
     @classmethod
@@ -39,3 +44,5 @@ class ListUtils(object):
             arr.sort(reverse = reverse)
 
         return arr
+
+sorted_plus = ListUtils.sorted_plus

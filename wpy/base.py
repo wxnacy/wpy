@@ -7,6 +7,12 @@ import json
 from enum import Enum
 from collections import defaultdict
 
+__all__ = [
+    "BaseObject",
+    "BaseEnum",
+    "BaseFactory",
+]
+
 class BaseObject(object):
     def __init__(self, *args, **kwargs):
         for k, v in kwargs.items():
