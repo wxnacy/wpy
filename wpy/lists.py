@@ -6,10 +6,12 @@ list 工具模块
 """
 
 from functools import cmp_to_key
+from collections import defaultdict
 
 __all__ = [
     "ListUtils",
     "sorted_plus",
+    "search",
 ]
 
 class ListUtils(object):
@@ -46,3 +48,25 @@ class ListUtils(object):
         return arr
 
 sorted_plus = ListUtils.sorted_plus
+
+def search(datas, word):
+    """
+    检索文本列表中包含 word 的元素，并按照匹配度排序返回
+    :param list datas: 文本列表
+    :param str word: 搜索的单词
+    :results list 搜索结果，按照匹配位置排序
+
+    >>> search(["123wxn", "wxn", "test"], "wxn")
+    >>> ["wxn", "123wxn"]
+    """
+    patten = defaultdict(int)
+    for o in datas:
+        patten[o] = -1
+        p = o.lower()
+        if word not in p:
+            continue
+        patten[o] = p.index(word)
+    res = list(filter(lambda x: patten[x] > -1, datas))
+    res.sort(key = lambda x: patten[x])
+    return res
+

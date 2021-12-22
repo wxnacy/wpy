@@ -7,6 +7,7 @@
 
 
 from wpy.lists import sorted_plus
+from wpy.lists import search
 
 def test_sortd_plus():
     """排序增强"""
@@ -21,3 +22,13 @@ def test_sortd_plus():
     arr = [{"age": 5, "id": 2}, {"id": 5}, {"age": 3}]
     sorted_plus(arr, [('age', -1)])
     assert arr == [{"age": 5, "id": 2},{"age": 3}, {"id": 5}]
+
+def test_search():
+    datas = [
+        "123wxn",
+        "wxn",
+        "test",
+    ]
+    res = search(datas, 'wxn')
+    assert res == ['wxn', '123wxn']
+    
