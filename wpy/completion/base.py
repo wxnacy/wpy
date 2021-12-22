@@ -8,7 +8,7 @@
 from prompt_toolkit.completion import Completer
 from prompt_toolkit.completion import Completion
 
-from wpy import tools
+from wpy.lists import search
 
 class BaseCompleter(Completer):
     char_before_cursor = ''
@@ -107,7 +107,7 @@ class BaseCompleter(Completer):
             words_dict = { o.text: o for o in words }
             words = [o.text for o in words]
 
-        words = tools.search(words, keyword)
+        words = search(words, keyword)
         if isinstance(first_word, Completion):
             for i in range(len(words)):
                 words[i] = words_dict[words[i]]
