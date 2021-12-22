@@ -23,13 +23,13 @@ VERSION = None
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-    'requests>=2.19.1',
+    #  'requests>=2.19.1',
     #  'pycrypto>=2.6.1',
     #  'Pillow>=5.2.0',
-    'click>=6.7',
+    #  'click>=6.7',
     'xmltodict',
     'pyyaml',
-    'rich',
+    #  'rich',
 ]
 
 # What packages are optional?

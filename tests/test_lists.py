@@ -31,4 +31,13 @@ def test_search():
     ]
     res = search(datas, 'wxn')
     assert res == ['wxn', '123wxn']
-    
+
+    datas = ['wxnacy', 'wen', 'testwxn', 'wxnsss']
+    res = search(datas, 'x')
+    assert res == ['wxnacy', 'wxnsss', 'testwxn']
+
+    res = search(datas, 'wxn')
+    assert res == ['wxnacy', 'wxnsss', 'testwxn']
+
+    res = search(['--space', '--param'], 'pa')
+    assert res == ['--param', '--space']
