@@ -7,6 +7,8 @@ import timeit
 import pkgutil
 import subprocess
 
+__all__ = ['clock']
+
 CLOCK_FMT = '[{T:0.8f}s] {F}({A}, {K}) -> {R}'
 def clock(times=1, fmt=CLOCK_FMT, logger_func=print):
     '''函数计时器'''
@@ -20,7 +22,6 @@ def clock(times=1, fmt=CLOCK_FMT, logger_func=print):
             F = func.__name__
             A = args
             K = kwargs
-            print(repr(args))
             R = repr(result)
             logger_func(fmt.format(**locals()))
             return result
