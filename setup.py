@@ -29,6 +29,7 @@ REQUIRED = [
     #  'click>=6.7',
     'xmltodict',
     'pyyaml',
+    'termcolor',
     #  'rich',
 ]
 
