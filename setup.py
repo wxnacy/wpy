@@ -25,7 +25,6 @@ setup(
         'click>=6.7',
         'xmltodict',
         'pyyaml',
-        'rich',
     ],
     entry_points={
         'console_scripts': ['wpy=wpy.app:run']
