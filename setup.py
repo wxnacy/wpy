@@ -30,6 +30,7 @@ REQUIRED = [
     'xmltodict',
     'pyyaml',
     'termcolor',
+    'w3lib',
     #  'rich',
 ]
 
