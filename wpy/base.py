@@ -13,37 +13,34 @@ __all__ = [
     "BaseFactory",
 ]
 
-class BaseObject(object):
+class BaseObject:
     def __init__(self, *args, **kwargs):
         for k, v in kwargs.items():
             setattr(self, k, v)
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return json.loads(self.to_json())
+
+    def dict(self) -> dict:
+        return self.to_dict()
 
     def to_json(self):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True)
-
-    #  def format(self):
-        #  return self.to_dict()
-
-    #  def __str__(self):
-        #  return self.to_json()
 
 
 class BaseEnum(Enum):
     """枚举基类"""
 
     @classmethod
-    def values(cls):
+    def values(cls) -> list:
         return [x.value for _, x in cls.__members__.items()]
 
     @classmethod
-    def is_valid(cls, value):
+    def is_valid(cls, value: any) -> bool:
         return value in cls.values()
 
     @classmethod
-    def get_by_value(cls, state_value):
+    def get_by_value(cls, state_value: any) -> Enum:
         for name, member in cls._member_map_.items():
             if state_value == member.value:
                 return member
@@ -51,7 +48,7 @@ class BaseEnum(Enum):
         return None
 
     @classmethod
-    def validate(cls, value):
+    def validate(cls, value: any):
         """验证枚举值"""
         if value not in cls.values():
             raise ValueError('不支持的枚举值: {val}'.format(val=value))
@@ -67,13 +64,13 @@ class BaseFactory(object):
     instance_func = None
 
     @classmethod
-    def build(cls, name=None):
+    def build(cls, name: any =None) -> type:
         """构建"""
         clazz = cls.__factory().get(name) or cls.default_cls
         return clazz
 
     @classmethod
-    def build_instance(cls, name=None):
+    def build_instance(cls, name: any = None) -> object:
         """构建实例"""
         clazz = cls.build(name)
         if not clazz:
@@ -95,7 +92,7 @@ class BaseFactory(object):
         return cls.__factory()
 
     @classmethod
-    def register(cls, active=True):
+    def register(cls, active: str =True):
         def decorate(func):
             #  if not issubclass(func, cls.object_cls):
                 #  raise Exception('only one register {} subclass'.format(
