@@ -14,6 +14,8 @@ w3lib = "^1.22.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"
+Sphinx = "^4.5.0"
+sphinx-rtd-theme = "^1.0.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
