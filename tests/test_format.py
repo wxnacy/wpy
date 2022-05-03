@@ -6,7 +6,7 @@
 """
 
 
-from wpy.format import format_size
+from wpy import format_size
 
 def test_format_size():
     """格式化 size"""

@@ -23,15 +23,15 @@ def test_getsize():
     assert path.getsize('tests/data/a.txt') == 7
     assert path.getsize('tests/data/c') == 26
 
-def test_write_yml():
-    """读写"""
+#  def test_write_yml():
+    #  """读写"""
 
-    data = {"name": "wxnacy"}
-    _path = f'/tmp/wpy_{random.randint(9000, 10000)}.yml'
-    path.write_yml(_path, data)
+    #  data = {"name": "wxnacy"}
+    #  _path = f'/tmp/wpy_{random.randint(9000, 10000)}.yml'
+    #  path.write_yml(_path, data)
 
-    res = path.read_dict(_path)
-    assert data, res
+    #  res = path.read_dict(_path)
+    #  assert data, res
 
 def test_zip():
     path.zip(test_data_dir, '/tmp')

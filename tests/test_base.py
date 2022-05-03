@@ -3,28 +3,46 @@
 # Author: wxnacy(wxnacy@gmail.com)
 # Description:
 
-import unittest
-from wpy import base
+import json
+import pytest
+from wpy import BaseObject, BaseEnum
 
-CONTENT = 'wxnacy'
-
-class User(base.BaseObject):
+class User(BaseObject):
     id = 0
     name = None
+    age: int
+    location: str
 
-class TestCase(unittest.TestCase):
-    def setUp(self):
-        pass
-    def teardown(self):
-        pass
 
-    def test_base_object(self):
-        user = User(id=1, name='wxnacy')
-        self.assertEqual(1, user.id)
-        self.assertEqual('wxnacy', user.name)
-        user_dict = user.to_dict()
-        self.assertEqual(1, user_dict['id'])
-        self.assertEqual('wxnacy', user_dict['name'])
+def test_base_object():
+    params = dict(
+        id=1, name='wxnacy', age = 1, location = 'Beijing'
+    )
 
-if __name__ == "__main__":
-    unittest.main()
+    user = User( **params)
+    assert user.id == 1
+    assert user.name == 'wxnacy'
+    assert user.age == 1
+    assert user.location == 'Beijing'
+
+    assert user.to_dict() == params
+    assert user.to_json() == json.dumps(params, sort_keys=True)
+
+    assert user.dict() == params
+    assert user.json() == json.dumps(params, sort_keys=True)
+
+class StatusEnum(BaseEnum):
+    SUCCESS = 'success'
+    FAILED = 'failed'
+    INIT = 'init'
+
+def test_base_enum():
+
+    assert StatusEnum.values() == ['success', 'failed', 'init']
+
+    assert StatusEnum.is_valid('success')
+
+    with pytest.raises(ValueError):
+        StatusEnum.validate('test')
+
+    assert StatusEnum.get_by_value('init') == StatusEnum.INIT

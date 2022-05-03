@@ -7,10 +7,10 @@
 import zipfile
 import os
 import json
-import yaml
+#  import yaml
 
 __all__ = [
-    'zip', 'unzip', 'read_dict', 'write_dict', 'write_yml', 'walkfile',
+    'zip', 'unzip', 'read_dict', 'write_dict', 'walkfile',
     'getsize'
 ]
 
@@ -20,16 +20,16 @@ def read_dict(filepath):
     :param str filepath: 文件地址
     """
     with open(filepath, 'r') as f:
-        if filepath.endswith('.yml'):
-            return yaml.safe_load(f)
+        #  if filepath.endswith('.yml'):
+            #  return yaml.safe_load(f)
         lines = f.readlines()
     return json.loads(''.join(lines))
 
-def write_yml(filepath, data):
-    """保存成 yml 格式文件"""
-    filepath = os.path.expanduser(filepath)
-    with open(filepath, 'w') as f:
-        yaml.dump(data, f)
+#  def write_yml(filepath, data):
+    #  """保存成 yml 格式文件"""
+    #  filepath = os.path.expanduser(filepath)
+    #  with open(filepath, 'w') as f:
+        #  yaml.dump(data, f)
 
 def write_dict(filepath, data):
     """保存成 dict 格式文件"""
