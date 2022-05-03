@@ -3,13 +3,16 @@
 # Author: wxnacy(wxnacy@gmail.com)
 # Description:
 
-import unittest
-#  from wpy import security
-import wpy
+from wpy import (
+    md5
+        )
 
-#  CONTENT = 'wxnacy'
-#  FILENAME='tests/test_security.txt'
-#  URL='https://raw.githubusercontent.com/wxnacy/wpy/master/tests/test_security.txt'
+CONTENT = 'wxnacy'
+FILENAME='tests/test_security.txt'
+URL='https://raw.githubusercontent.com/wxnacy/wpy/master/tests/test_security.txt'
+
+def test_md5():
+    assert md5(CONTENT) == '1f806eb48b670c40af49a3f764ba086f'
 
 #  class TestCase(unittest.TestCase):
     #  def setUp(self):
@@ -24,8 +27,6 @@ import wpy
                 #  'e272638378933bcd0921396695cc357a5f8ed7c136d06878d0b9c9ae0302c14a')
         #  self.assertEqual(security.sha512(CONTENT),
                 #  'edc44730889e61c7674c6f80c550a865d222ac9214cbb310e61303c5b1fc6bc3ea801a95a3dc2070d2c90aa7a5cae53bbc417b0c10be2e0d33d41d6a68cbf822')
-        #  self.assertEqual(security.md5(CONTENT),
-                #  '1f806eb48b670c40af49a3f764ba086f')
         #  self.assertEqual(MD5.encrypt(CONTENT), '1f806eb48b670c40af49a3f764ba086f')
         #  self.assertEqual(MD5.encrypt_file(FILENAME),
                 #  '6e7a99c2df5ff33f691eff82623a1152')

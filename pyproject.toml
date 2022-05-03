@@ -5,6 +5,9 @@ description = "a library for python Developer"
 authors = ["wxnacy <wxnacy@gmail.com>"]
 license = "MIT"
 
+[tool.poetry.scripts]
+wpy="wpy.cli.shell:main"
+
 [tool.poetry.dependencies]
 python = "^3.6"
 
