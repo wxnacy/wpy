@@ -3,6 +3,9 @@
 # Author: wxnacy(wxnacy@gmail.com)
 # Description:
 
+from typing import (
+    Union
+)
 
 __all__ = [
     'format_float',
@@ -38,27 +41,23 @@ class Format(object):
                     return '{}{}'.format(int(res_num), suffixs[i])
                 else:
                     return '{:0.2f}{}'.format(res_num, suffixs[i] )
+        # 超过显示范围的数据按照 B 单位返回
         return '{}B'.format(size)
 
     @classmethod
-    def format_float(cls, float_val, decimal_digits=2):
+    def format_float(cls, float_val: float, decimal_digits: int=2) -> float:
         """格式化 float 数据"""
         if not float_val:
             return float_val
         fmt = '{{:0.{}f}}'.format(decimal_digits)
-        return float('{:0.2f}'.format(float_val))
+        return float(fmt.format(float_val))
 
     @classmethod
-    def _is_int(cls, num):
+    def _is_int(cls, num: Union[int, float]) -> bool:
         if isinstance(num, int):
             return True
         if isinstance(num, float):
-            suffix = str(num).split('.')[-1]
-            if len(suffix) > 1:
-                return False
-            if suffix == '0':
-                return True
-        return False
+            return num == int(num)
 
 
 format_seconds = Format.format_seconds

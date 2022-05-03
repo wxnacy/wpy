@@ -4,6 +4,9 @@
 # Description:
 
 import hashlib
+from typing import (
+    List
+)
 
 __all__ = ['md5', 'md5file', 'sha1', 'sha256', 'sha512', 'short']
 
@@ -18,7 +21,7 @@ code_map = (
     'U' , 'V' , 'W' , 'X' , 'Y' , 'Z'
 )
 
-def short(long_url):
+def short(long_url: str) -> List[str]:
     '''生成短连接'''
     hkeys = []
     hex_text = md5(long_url)
@@ -36,31 +39,31 @@ def short(long_url):
         hkeys.append(''.join(v))
     return hkeys
 
-def sha1(text):
+def sha1(text: str) -> str:
     '''Returns a sha1 hash object; optionally initialized with a string'''
     sha1 = hashlib.sha1()
     sha1.update(text.encode())
     return sha1.hexdigest()
 
-def sha256(text):
+def sha256(text: str) -> str:
     '''Returns a sha256 hash object; optionally initialized with a string'''
     sha1 = hashlib.sha256()
     sha1.update(text.encode())
     return sha1.hexdigest()
 
-def sha512(text):
+def sha512(text: str) -> str:
     '''Returns a sha512 hash object; optionally initialized with a string'''
     sha1 = hashlib.sha512()
     sha1.update(text.encode())
     return sha1.hexdigest()
 
-def md5(text):
+def md5(text: str) -> str:
     '''Returns a md5 hash object; optionally initialized with a string'''
     sha1 = hashlib.md5()
     sha1.update(text.encode())
     return sha1.hexdigest()
 
-def md5file(filepath):
+def md5file(filepath: str) -> str:
     h = hashlib.md5()
     with open(filepath, 'rb') as f:
         for chunk in iter(lambda: f.read(4096), b""):
