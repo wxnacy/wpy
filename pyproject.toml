@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "wpy"
-version = "0.7.1"
+version = "0.7.2"
 description = "a library for python Developer"
 authors = ["wxnacy <wxnacy@gmail.com>"]
 license = "MIT"

@@ -6,11 +6,15 @@
 import timeit
 import pkgutil
 import subprocess
+from typing import (
+    Callable
+)
 
-__all__ = ['clock']
+__all__ = ['clock', 'run_shell', 'find_modules']
 
 CLOCK_FMT = '[{T:0.8f}s] {F}({A}, {K}) -> {R}'
-def clock(times=1, fmt=CLOCK_FMT, logger_func=print):
+
+def clock(times: int=1, fmt: str=CLOCK_FMT, logger_func: Callable=print):
     '''函数计时器'''
     def clock_wraper(func):
         def _wraper(*args, **kwargs):
@@ -41,7 +45,7 @@ def find_modules(paths):
             module_path = '{}/{}'.format(finder.path, name)
             yield module_path.replace('/', '.')
 
-def run_shell(command):
+def run_shell(command: str) -> tuple:
     """运行 shell 语句"""
     res = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE,
         stderr = subprocess.PIPE)

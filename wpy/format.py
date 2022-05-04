@@ -8,6 +8,7 @@ from typing import (
 )
 
 __all__ = [
+    'Format',
     'format_float',
     'format_seconds',
     'format_size',
