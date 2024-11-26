@@ -39,3 +39,6 @@ import unittest
 
 #  if __name__ == "__main__":
     #  unittest.main()
+#  xmltodict = "^0.12.0"
+#  PyYAML = "^6.0"
+#  termcolor = "^1.1.0"
