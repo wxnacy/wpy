@@ -5,6 +5,7 @@ from . import lists
 from .api.async_api_client import AsyncApiClient
 from .base import BaseObject, BaseEnum
 from .common.enum import Enum, EnumMem
+from .common.singleton import Singleton
 from .format import *
 from .hashs import *
 
@@ -17,4 +18,5 @@ __all__ = [
     "BaseObject", "BaseEnum",
     # common
     "EnumMem", "Enum",
+    "Singleton",
 ]
