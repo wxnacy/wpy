@@ -4,7 +4,6 @@
 # Description:
 
 import asyncio
-import traceback
 from typing import Type, Union, Dict
 from pydantic import BaseModel
 from aiohttp import ClientError, ClientSession
@@ -75,11 +74,12 @@ class AsyncApiClient:
         #  logger.info(f"{log_prefix} headers: {headers}")
 
         for attempt in range(self.max_retries):
+            session = ClientSession(
+                base_url=self.host,
+                raise_for_status=True
+            )
             try:
-                async with ClientSession(
-                    base_url=self.host,
-                    raise_for_status=True
-                ).request(
+                async with session.request(
                     method,
                     url,
                     params=params,
@@ -88,7 +88,8 @@ class AsyncApiClient:
                     **kwargs
                 ) as res:
                     res_data = await res.json()
-                    #  logger.info(f"{log_prefix} response {json.dumps(res_data, ensure_ascii=False)}")
+                    import json
+                    #  print(f"{log_prefix} response {json.dumps(res_data, ensure_ascii=False, indent=4)}")
                     if res_clz:
                         return res_clz(**res_data)
                     return res
@@ -101,4 +102,7 @@ class AsyncApiClient:
                     #  logger.error(f"{log_prefix} {traceback.format_exc()}")
                     #  logger.error(f"{log_prefix} {traceback.format_stack()}")
                     raise e
+            finally:
+                await session.close()
+
         return None
