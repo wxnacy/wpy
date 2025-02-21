@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "wpy"
-version = "0.7.4"
+version = "0.7.5"
 description = "a library for python Developer"
 authors = ["wxnacy <wxnacy@gmail.com>"]
 license = "MIT"
@@ -12,6 +12,7 @@ wpy="wpy.cli.shell:main"
 python = "^3.11"
 aiohttp = "^3.11.7"
 pydantic = "^2.10.1"
+requests = "^2.32.3"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^6.2.4"

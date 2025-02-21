@@ -6,6 +6,7 @@ from .api.async_api_client import AsyncApiClient
 from .base import BaseObject, BaseEnum
 from .common.enum import Enum, EnumMem
 from .common.singleton import Singleton
+from .downloader.download import download_async
 from .format import *
 from .hashs import *
 
@@ -19,4 +20,5 @@ __all__ = [
     # common
     "EnumMem", "Enum",
     "Singleton",
+    "download_async",
 ]
