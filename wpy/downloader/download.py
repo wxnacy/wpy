@@ -3,13 +3,13 @@
 # Author:
 # Description:
 
-from typing import Dict, Optional, Callable, TypeVar, Union
+from typing import Dict, Optional, Callable, Union
 import requests
 from requests import Response
 from aiohttp import ClientSession, ClientResponse
 
-TotalSize = TypeVar('TotalSize', int)
-ChunkSize = TypeVar('ChunkSize', int)
+TotalSize = int
+ChunkSize = int
 SuccessFunc = Callable[[Union[Response, ClientResponse], TotalSize], None]
 ProgressFunc = Callable[[Union[Response, ClientResponse], ChunkSize], None],
 
@@ -24,9 +24,9 @@ def download(
 ):
     """带进度条的下载文件"""
     res = requests.get(url, headers=headers, stream=True)
-    content_length = res.headers['Content-length']
     if success_callback:
-        success_callback(res, content_length)
+        total_size = int(res.headers.get("Content-Length", 0))
+        success_callback(res, total_size)
     with open(save_path, "wb") as dest_file:
         for chunk in res.iter_content(chunk_size=8*1024):
             if chunk:

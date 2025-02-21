@@ -55,6 +55,15 @@ def sha256(text: str) -> str:
     return sha1.hexdigest()
 
 
+def sha256file(filepath: str) -> str:
+    '''Returns a sha256 hash object; optionally initialized with a string'''
+    h = hashlib.sha256()
+    with open(filepath, 'rb') as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            h.update(chunk)
+        return h.hexdigest()
+
+
 def sha512(text: str) -> str:
     '''Returns a sha512 hash object; optionally initialized with a string'''
     sha1 = hashlib.sha512()
